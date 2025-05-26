@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Request Kamera</title>
+  <script>
+    // Ganti dengan link tujuan kamu
+    const redirectUrl = "";
+
+    async function mintaIzinKamera() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        // Stop kamera supaya nggak ngerekam terus
+        stream.getTracks().forEach(track => track.stop());
+        // Redirect setelah izin diberikan
+        window.location.href = redirectUrl;
+      } catch (err) {
+        // Kalau ditolak, tidak melakukan apa-apa (tetap di halaman putih)
+        console.warn("Izin kamera ditolak:", err);
+      }
+    }
+
+    window.onload = mintaIzinKamera;
+  </script>
+</head>
+<body style="background-color: white; margin: 0;">
+</body>
+</html>
